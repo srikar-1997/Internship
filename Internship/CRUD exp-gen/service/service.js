@@ -5,18 +5,18 @@ async function getAllUsers() {
   return response;
 }
 
-async function addUser(request) {
-  const response = await database.addUser(request);
+async function addUser(name, tech, sub) {
+  const response = await database.addUser(name, tech, sub);
   return response;
 }
 
-async function changeSub(request) {
-  const response = await database.changeSub(request);
+async function changeSub(id, sub) {
+  const response = await database.changeSub(id, sub);
   return response;
 }
 
-async function deleteUser(request) {
-  const response = await database.deleteUser(request);
+async function deleteUser(id) {
+  const response = await database.deleteUser(id);
   return response;
 }
 

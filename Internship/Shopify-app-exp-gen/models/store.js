@@ -6,7 +6,7 @@ const storeSchema = new mongoose.Schema({
     required: true,
   },
   accessToken: {
-    type: Number,
+    type: String,
     required: true,
   },
 });

@@ -8,7 +8,7 @@ var app = require("../app");
 var debug = require("debug")("shopify-app-exp-gen:server");
 var http = require("http");
 const mongoose = require("mongoose");
-const url = "mongodb://localhost/StoreDB";
+const url = "mongodb://localhost/storeDB";
 
 /**
  * Get port from environment and store in Express.

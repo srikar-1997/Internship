@@ -10,11 +10,11 @@ async function getAllUsers() {
   }
 }
 
-async function addUser(request) {
+async function addUser(name, tech, sub) {
   const user = new User({
-    name: request.body.name,
-    tech: request.body.tech,
-    sub: request.body.sub,
+    name: name,
+    tech: tech,
+    sub: sub,
   });
   try {
     const a1 = await user.save();
@@ -25,12 +25,12 @@ async function addUser(request) {
   }
 }
 
-async function changeSub(request) {
+async function changeSub(id, sub) {
   try {
-    console.log(request.params.id);
-    const user = await User.findById(request.params.id);
+    console.log(id);
+    const user = await User.findById(id);
     console.log(user);
-    user.sub = request.body.sub;
+    user.sub = sub;
     await user.save();
     return { message: "ChangedSub", status: 200 };
   } catch (err) {
@@ -38,9 +38,9 @@ async function changeSub(request) {
   }
 }
 
-async function deleteUser(request) {
+async function deleteUser(id) {
   try {
-    const user = await User.findById(request.params.id);
+    const user = await User.findById(id);
     await User.remove(user);
     return { message: "User Removed", status: 200 };
   } catch (err) {
