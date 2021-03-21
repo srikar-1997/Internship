@@ -50,61 +50,57 @@ async function hmacVerification(hmac, generatedHmac) {
   }
 }
 
-async function getAccessTokenFromShopify(
-  accessTokenRequestURL,
-  accessTokenPayLoad,
-  shop
-) {
+async function getAccessTokenFromShopify(apiKey, apiSecret, code, shop) {
   let getAccessTokenFromShopifyResponse = await shopifyIntegration.getAccessTokenFromShopify(
-    accessTokenRequestURL,
-    accessTokenPayLoad,
+    apiKey,
+    apiSecret,
+    code,
     shop
   );
   return getAccessTokenFromShopifyResponse;
 }
 
-async function getProductsFromStore(apiRequestURL, apiRequestHeader) {
+async function getProductsFromStore(shop, accessToken) {
   let getProductsFromStoreResponse = await shopifyIntegration.getProductsFromStore(
-    apiRequestURL,
-    apiRequestHeader
+    shop,
+    accessToken
   );
   return getProductsFromStoreResponse;
 }
 
-async function addProductToStore(apiRequestURL, apiRequestHeader, product) {
+async function addProductToStore(shop, accessToken, product) {
   let addProductToStoreResponse = await shopifyIntegration.addProductToStore(
-    apiRequestURL,
-    apiRequestHeader,
+    shop,
+    accessToken,
     product
   );
   return addProductToStoreResponse;
 }
 
-async function deleteProductFromStore(apiRequestURL, apiRequestHeader) {
+async function deleteProductFromStore(shop, id, accessToken) {
   let deleteProductFromStoreResponse = await shopifyIntegration.deleteProductFromStore(
-    apiRequestURL,
-    apiRequestHeader
+    shop,
+    id,
+    accessToken
   );
   return deleteProductFromStoreResponse;
 }
 
-async function updateProductTitleInStore(
-  apiRequestURL,
-  apiRequestHeader,
-  product
-) {
-  let updateProductTitleInStoreResponse = await shopifyIntegration.updateProductTitleInStore(
-    apiRequestURL,
-    apiRequestHeader,
+async function updateProductInStore(shop, id, accessToken, product) {
+  let updateProductInStoreResponse = await shopifyIntegration.updateProductInStore(
+    shop,
+    id,
+    accessToken,
     product
   );
-  return updateProductTitleInStoreResponse;
+  return updateProductInStoreResponse;
 }
 
-async function addProductImage(apiRequestURL, apiRequestHeader, image) {
+async function addProductImage(shop, id, accessToken, image) {
   let addProductImageResponse = await shopifyIntegration.addProductImage(
-    apiRequestURL,
-    apiRequestHeader,
+    shop,
+    id,
+    accessToken,
     image
   );
   return addProductImageResponse;
@@ -120,6 +116,6 @@ module.exports = {
   getProductsFromStore,
   addProductToStore,
   deleteProductFromStore,
-  updateProductTitleInStore,
+  updateProductInStore,
   addProductImage,
 };

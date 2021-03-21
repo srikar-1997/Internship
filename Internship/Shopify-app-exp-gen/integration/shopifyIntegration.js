@@ -32,12 +32,15 @@ async function getAccessTokenFromDB(shop) {
   }
 }
 
-async function getAccessTokenFromShopify(
-  accessTokenRequestURL,
-  accessTokenPayLoad,
-  shop
-) {
+async function getAccessTokenFromShopify(apiKey, apiSecret, code, shop) {
   let accessTokenData = "";
+  const accessTokenRequestURL = "https://" + shop + "/admin/oauth/access_token";
+  const accessTokenPayLoad = {
+    client_id: apiKey,
+    client_secret: apiSecret,
+    code,
+  };
+
   try {
     accessTokenData = await axios.post(
       accessTokenRequestURL,
@@ -68,8 +71,15 @@ async function getAccessTokenFromShopify(
   }
 }
 
-async function getProductsFromStore(apiRequestURL, apiRequestHeader) {
+async function getProductsFromStore(shop, accessToken) {
   let productsData;
+
+  const apiRequestURL = "https://" + shop + "/admin/api/2021-01/products.json";
+
+  const apiRequestHeader = {
+    "X-Shopify-Access-Token": accessToken,
+  };
+
   try {
     productsData = await axios.get(apiRequestURL, {
       headers: apiRequestHeader,
@@ -88,8 +98,15 @@ async function getProductsFromStore(apiRequestURL, apiRequestHeader) {
   }
 }
 
-async function addProductToStore(apiRequestURL, apiRequestHeader, product) {
+async function addProductToStore(shop, accessToken, product) {
   let productsData;
+
+  const apiRequestURL = "https://" + shop + "/admin/api/2021-01/products.json";
+
+  const apiRequestHeader = {
+    "X-Shopify-Access-Token": accessToken,
+  };
+
   try {
     productsData = await axios.post(apiRequestURL, product, {
       headers: apiRequestHeader,
@@ -107,8 +124,16 @@ async function addProductToStore(apiRequestURL, apiRequestHeader, product) {
   }
 }
 
-async function deleteProductFromStore(apiRequestURL, apiRequestHeader) {
+async function deleteProductFromStore(shop, id, accessToken) {
   let productsData;
+
+  const apiRequestURL =
+    "https://" + shop + "/admin/api/2021-01/products/" + id + ".json";
+
+  const apiRequestHeader = {
+    "X-Shopify-Access-Token": accessToken,
+  };
+
   try {
     productsData = await axios.delete(apiRequestURL, {
       headers: apiRequestHeader,
@@ -126,12 +151,15 @@ async function deleteProductFromStore(apiRequestURL, apiRequestHeader) {
   }
 }
 
-async function updateProductTitleInStore(
-  apiRequestURL,
-  apiRequestHeader,
-  product
-) {
+async function updateProductInStore(shop, id, accessToken, product) {
   let productsData;
+  const apiRequestURL =
+    "https://" + shop + "/admin/api/2021-01/products/" + id + ".json";
+
+  const apiRequestHeader = {
+    "X-Shopify-Access-Token": accessToken,
+  };
+
   try {
     productsData = await axios.put(apiRequestURL, product, {
       headers: apiRequestHeader,
@@ -149,8 +177,14 @@ async function updateProductTitleInStore(
   }
 }
 
-async function addProductImage(apiRequestURL, apiRequestHeader, image) {
+async function addProductImage(shop, id, accessToken, image) {
   let productsData;
+  const apiRequestURL =
+    "https://" + shop + "/admin/api/2021-01/products/" + id + "/images.json";
+  const apiRequestHeader = {
+    "X-Shopify-Access-Token": accessToken,
+  };
+
   try {
     productsData = await axios.post(apiRequestURL, image, {
       headers: apiRequestHeader,
@@ -175,6 +209,6 @@ module.exports = {
   getProductsFromStore,
   addProductToStore,
   deleteProductFromStore,
-  updateProductTitleInStore,
+  updateProductInStore,
   addProductImage,
 };
