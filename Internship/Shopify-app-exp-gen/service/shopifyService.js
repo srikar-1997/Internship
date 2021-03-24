@@ -106,6 +106,83 @@ async function addProductImage(shop, id, accessToken, image) {
   return addProductImageResponse;
 }
 
+async function getOrdersFromShopifyStore(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword
+) {
+  return await shopifyIntegration.getOrdersFromShopifyStore(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword
+  );
+}
+
+async function placeOrder(shop, privateAppAPIKey, privateAppPassword, order) {
+  return await shopifyIntegration.placeOrder(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    order
+  );
+}
+
+async function getProductsFromShopifyStorePrivateApp(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword
+) {
+  return await shopifyIntegration.getProductsFromShopifyStorePrivateApp(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword
+  );
+}
+
+async function addProductIntoShopifyStorePrivateApp(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  product
+) {
+  return await shopifyIntegration.addProductIntoShopifyStorePrivateApp(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    product
+  );
+}
+
+async function getInventoryDetailsFromShopifyStore(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  inventory_item_id,
+  location_id
+) {
+  return await shopifyIntegration.getInventoryDetailsFromShopifyStore(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    inventory_item_id,
+    location_id
+  );
+}
+
+async function changeInventoryDetailsInShopifyStore(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  inventory_item
+) {
+  return await shopifyIntegration.changeInventoryDetailsInShopifyStore(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    inventory_item
+  );
+}
+
 module.exports = {
   redirecURL,
   isShopInDB,
@@ -118,4 +195,10 @@ module.exports = {
   deleteProductFromStore,
   updateProductInStore,
   addProductImage,
+  getOrdersFromShopifyStore,
+  placeOrder,
+  getProductsFromShopifyStorePrivateApp,
+  addProductIntoShopifyStorePrivateApp,
+  getInventoryDetailsFromShopifyStore,
+  changeInventoryDetailsInShopifyStore,
 };

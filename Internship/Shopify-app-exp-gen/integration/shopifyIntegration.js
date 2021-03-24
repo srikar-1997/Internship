@@ -202,6 +202,171 @@ async function addProductImage(shop, id, accessToken, image) {
   }
 }
 
+async function getOrdersFromShopifyStore(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword
+) {
+  var url =
+    "https://" +
+    privateAppAPIKey +
+    ":" +
+    privateAppPassword +
+    "@" +
+    shop +
+    "/admin/api/2021-01/orders.json";
+  let ordersData;
+
+  try {
+    ordersData = await axios.get(url);
+    return { data: ordersData.data, status: 200 };
+  } catch (e) {
+    console.log(e);
+    return {
+      status: 400,
+      msg: "getting orders from store failed",
+    };
+  }
+}
+
+async function placeOrder(shop, privateAppAPIKey, privateAppPassword, order) {
+  var url =
+    "https://" +
+    privateAppAPIKey +
+    ":" +
+    privateAppPassword +
+    "@" +
+    shop +
+    "/admin/api/2021-01/orders.json";
+  let placeOrderData;
+
+  try {
+    placeOrderData = await axios.post(url, order);
+    return { data: placeOrderData.data, status: 200 };
+  } catch (e) {
+    console.log(e);
+    return {
+      status: 400,
+      msg: "placing order failed",
+    };
+  }
+}
+
+async function getProductsFromShopifyStorePrivateApp(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword
+) {
+  var url =
+    "https://" +
+    privateAppAPIKey +
+    ":" +
+    privateAppPassword +
+    "@" +
+    shop +
+    "/admin/api/2021-01/products.json";
+
+  let productsData;
+  try {
+    productsData = await axios.get(url);
+    return { data: productsData.data, status: 200 };
+  } catch (e) {
+    console.log(e);
+    return {
+      status: 400,
+      msg: "getting products from store failed",
+    };
+  }
+}
+
+async function addProductIntoShopifyStorePrivateApp(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  product
+) {
+  var url =
+    "https://" +
+    privateAppAPIKey +
+    ":" +
+    privateAppPassword +
+    "@" +
+    shop +
+    "/admin/api/2021-01/products.json";
+  let productData;
+
+  try {
+    productData = await axios.post(url, product);
+    return { data: productData.data, status: 200 };
+  } catch (e) {
+    console.log(e);
+    return {
+      status: 400,
+      msg: "adding product into store failed",
+    };
+  }
+}
+
+async function getInventoryDetailsFromShopifyStore(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  inventory_item_id,
+  location_id
+) {
+  var url =
+    "https://" +
+    privateAppAPIKey +
+    ":" +
+    privateAppPassword +
+    "@" +
+    shop +
+    "/admin/api/2021-01/inventory_levels.json?inventory_item_ids=" +
+    inventory_item_id +
+    "&location_ids=" +
+    location_id;
+
+  let inventoryData;
+  try {
+    inventoryData = await axios.get(url);
+    return { data: inventoryData.data, status: 200 };
+  } catch (e) {
+    console.log(e);
+    return {
+      status: 400,
+      msg: "getting inventory details failed",
+    };
+  }
+}
+
+async function changeInventoryDetailsInShopifyStore(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  inventory_item
+) {
+  var url =
+    "https://" +
+    privateAppAPIKey +
+    ":" +
+    privateAppPassword +
+    "@" +
+    shop +
+    "/admin/api/2021-01/inventory_levels/adjust.json";
+
+  let inventoryData;
+  try {
+    inventoryData = await axios.post(url, inventory_item);
+    return { data: inventoryData.data, status: 200 };
+  } catch (e) {
+    console.log(e);
+    return {
+      status: 400,
+      msg: "changing inventory details failed",
+    };
+  }
+}
+
 module.exports = {
   addStore,
   getAccessTokenFromDB,
@@ -211,4 +376,10 @@ module.exports = {
   deleteProductFromStore,
   updateProductInStore,
   addProductImage,
+  getOrdersFromShopifyStore,
+  placeOrder,
+  getProductsFromShopifyStorePrivateApp,
+  addProductIntoShopifyStorePrivateApp,
+  getInventoryDetailsFromShopifyStore,
+  changeInventoryDetailsInShopifyStore,
 };

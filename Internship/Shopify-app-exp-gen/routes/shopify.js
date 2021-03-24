@@ -8,6 +8,7 @@ const apiSecret = process.env.SHOPIFY_API_SECRET;
 const scopes = "write_products, write_orders";
 const cookie = require("cookie");
 const request = require("request-promise");
+const axios = require("axios");
 
 /* GET users listing. */
 router.get("/", async function (req, res) {
@@ -164,6 +165,127 @@ router.post("/addProductImage/:id", async (req, res) => {
     res.send(addProductImageResponse);
   } else {
     res.send(addProductImageResponse);
+  }
+});
+
+router.post("/getOrdersFromShopifyStore", async (req, res) => {
+  let shop = req.body.shop;
+  let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
+  let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
+
+  let getOrdersFromShopifyStoreResponse = await shopifyService.getOrdersFromShopifyStore(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword
+  );
+
+  if (getOrdersFromShopifyStoreResponse.status === 200) {
+    res.send(getOrdersFromShopifyStoreResponse);
+  } else {
+    res.send(getOrdersFromShopifyStoreResponse);
+  }
+});
+
+router.post("/PlaceOrder", async (req, res) => {
+  let shop = req.body.shop;
+  let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
+  let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
+  let order = req.body.order;
+
+  let placeOrderResponse = await shopifyService.placeOrder(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    order
+  );
+
+  if (placeOrderResponse.status === 200) {
+    res.send(placeOrderResponse);
+  } else {
+    res.send(placeOrderResponse);
+  }
+});
+
+router.post("/getProductsFromShopifyStorePrivateApp", async (req, res) => {
+  let shop = req.body.shop;
+  let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
+  let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
+
+  let getProductsFromShopifyStorePrivateAppResponse = await shopifyService.getProductsFromShopifyStorePrivateApp(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword
+  );
+
+  if (getProductsFromShopifyStorePrivateAppResponse.status === 200) {
+    res.send(getProductsFromShopifyStorePrivateAppResponse);
+  } else {
+    res.send(getProductsFromShopifyStorePrivateAppResponse);
+  }
+});
+
+router.post("/addProductIntoShopifyStorePrivateApp", async (req, res) => {
+  let shop = req.body.shop;
+  let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
+  let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
+  let product = req.body.product;
+
+  let addProductIntoShopifyStorePrivateAppResponse = await shopifyService.addProductIntoShopifyStorePrivateApp(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    product
+  );
+
+  if (addProductIntoShopifyStorePrivateAppResponse.status === 200) {
+    res.send(addProductIntoShopifyStorePrivateAppResponse);
+  } else {
+    res.send(addProductIntoShopifyStorePrivateAppResponse);
+  }
+});
+
+router.post("/getInventoryDetailsFromShopifyStore", async (req, res) => {
+  let shop = req.body.shop;
+  let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
+  let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
+  let inventory_item_id = req.body.inventory_item_id;
+  let inventory_item = req.body.inventory_item;
+  let location_id = req.body.location_id;
+
+  let getInventoryDetailsFromShopifyStoreResponse = await shopifyService.getInventoryDetailsFromShopifyStore(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    inventory_item_id,
+    location_id
+  );
+
+  if (getInventoryDetailsFromShopifyStoreResponse.status === 200) {
+    res.send(getInventoryDetailsFromShopifyStoreResponse);
+  } else {
+    res.send(getInventoryDetailsFromShopifyStoreResponse);
+  }
+});
+
+router.post("/changeInventoryDetailsInShopifyStore", async (req, res) => {
+  let shop = req.body.shop;
+  let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
+  let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
+  let inventory_item_id = req.body.inventory_item_id;
+  let inventory_item = req.body.inventory_item;
+  let location_id = req.body.location_id;
+
+  let changeInventoryDetailsInShopifyStoreResponse = await shopifyService.changeInventoryDetailsInShopifyStore(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    inventory_item
+  );
+
+  if (changeInventoryDetailsInShopifyStoreResponse.status === 200) {
+    res.send(changeInventoryDetailsInShopifyStoreResponse);
+  } else {
+    res.send(changeInventoryDetailsInShopifyStoreResponse);
   }
 });
 
