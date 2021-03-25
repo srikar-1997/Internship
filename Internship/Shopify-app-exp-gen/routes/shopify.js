@@ -248,15 +248,21 @@ router.post("/getInventoryDetailsFromShopifyStore", async (req, res) => {
   let shop = req.body.shop;
   let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
   let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
-  let inventory_item_id = req.body.inventory_item_id;
   let inventory_item = req.body.inventory_item;
-  let location_id = req.body.location_id;
+  // let location_id = req.body.location_id;
+  let locationDetails = await shopifyService.getLocationDetails(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword
+  );
+
+  console.log(locationDetails.data.locations[0].id);
+  let location_id = locationDetails.data.locations[0].id;
 
   let getInventoryDetailsFromShopifyStoreResponse = await shopifyService.getInventoryDetailsFromShopifyStore(
     shop,
     privateAppAPIKey,
     privateAppPassword,
-    inventory_item_id,
     location_id
   );
 
@@ -271,9 +277,7 @@ router.post("/changeInventoryDetailsInShopifyStore", async (req, res) => {
   let shop = req.body.shop;
   let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
   let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
-  let inventory_item_id = req.body.inventory_item_id;
   let inventory_item = req.body.inventory_item;
-  let location_id = req.body.location_id;
 
   let changeInventoryDetailsInShopifyStoreResponse = await shopifyService.changeInventoryDetailsInShopifyStore(
     shop,
@@ -286,6 +290,96 @@ router.post("/changeInventoryDetailsInShopifyStore", async (req, res) => {
     res.send(changeInventoryDetailsInShopifyStoreResponse);
   } else {
     res.send(changeInventoryDetailsInShopifyStoreResponse);
+  }
+});
+
+router.post("/getLocationDetails", async (req, res) => {
+  let shop = req.body.shop;
+  let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
+  let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
+
+  let getLocationDetailsResponse = await shopifyService.getLocationDetails(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword
+  );
+
+  console.log(shop);
+
+  if (getLocationDetailsResponse.status === 200) {
+    res.send(getLocationDetailsResponse);
+  } else {
+    res.send(getLocationDetailsResponse);
+  }
+});
+
+router.post("/captureTransaction", async (req, res) => {
+  let shop = req.body.shop;
+  let order_id = req.body.order_id;
+  let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
+  let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
+  let transaction = req.body.transaction;
+
+  let captureTransactionResponse = await shopifyService.captureTransaction(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    order_id,
+    transaction
+  );
+
+  console.log(shop);
+
+  if (captureTransactionResponse.status === 200) {
+    res.send(captureTransactionResponse);
+  } else {
+    res.send(captureTransactionResponse);
+  }
+});
+
+router.get("/getFulfillments", async (req, res) => {
+  let shop = req.body.shop;
+  let order_id = req.body.order_id;
+  let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
+  let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
+
+  let getFulfillmentsResponse = await shopifyService.getFulfillments(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    order_id
+  );
+
+  console.log(shop);
+
+  if (getFulfillmentsResponse.status === 200) {
+    res.send(getFulfillmentsResponse);
+  } else {
+    res.send(getFulfillmentsResponse);
+  }
+});
+
+router.post("/addFulfillments", async (req, res) => {
+  let shop = req.body.shop;
+  let order_id = req.body.order_id;
+  let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
+  let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
+  let fulfillment = req.body.fulfillment;
+
+  let addFulfillmentsResponse = await shopifyService.addFulfillments(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    order_id,
+    fulfillment
+  );
+
+  console.log(shop);
+
+  if (addFulfillmentsResponse.status === 200) {
+    res.send(addFulfillmentsResponse);
+  } else {
+    res.send(addFulfillmentsResponse);
   }
 });
 

@@ -157,14 +157,12 @@ async function getInventoryDetailsFromShopifyStore(
   shop,
   privateAppAPIKey,
   privateAppPassword,
-  inventory_item_id,
   location_id
 ) {
   return await shopifyIntegration.getInventoryDetailsFromShopifyStore(
     shop,
     privateAppAPIKey,
     privateAppPassword,
-    inventory_item_id,
     location_id
   );
 }
@@ -180,6 +178,60 @@ async function changeInventoryDetailsInShopifyStore(
     privateAppAPIKey,
     privateAppPassword,
     inventory_item
+  );
+}
+
+async function getLocationDetails(shop, privateAppAPIKey, privateAppPassword) {
+  return await shopifyIntegration.getLocationDetails(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword
+  );
+}
+
+async function captureTransaction(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  order_id,
+  transaction
+) {
+  return await shopifyIntegration.captureTransaction(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    order_id,
+    transaction
+  );
+}
+
+async function getFulfillments(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  order_id
+) {
+  return await shopifyIntegration.getFulfillments(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    order_id
+  );
+}
+
+async function addFulfillments(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  order_id,
+  fulfillment
+) {
+  return await shopifyIntegration.addFulfillments(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    order_id,
+    fulfillment
   );
 }
 
@@ -201,4 +253,8 @@ module.exports = {
   addProductIntoShopifyStorePrivateApp,
   getInventoryDetailsFromShopifyStore,
   changeInventoryDetailsInShopifyStore,
+  getLocationDetails,
+  captureTransaction,
+  getFulfillments,
+  addFulfillments,
 };

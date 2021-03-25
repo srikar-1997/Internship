@@ -311,7 +311,6 @@ async function getInventoryDetailsFromShopifyStore(
   shop,
   privateAppAPIKey,
   privateAppPassword,
-  inventory_item_id,
   location_id
 ) {
   var url =
@@ -321,10 +320,9 @@ async function getInventoryDetailsFromShopifyStore(
     privateAppPassword +
     "@" +
     shop +
-    "/admin/api/2021-01/inventory_levels.json?inventory_item_ids=" +
-    inventory_item_id +
-    "&location_ids=" +
-    location_id;
+    "/admin/api/2021-01/locations/" +
+    location_id +
+    "/inventory_levels.json";
 
   let inventoryData;
   try {
@@ -367,6 +365,121 @@ async function changeInventoryDetailsInShopifyStore(
   }
 }
 
+async function getLocationDetails(shop, privateAppAPIKey, privateAppPassword) {
+  var url =
+    "https://" +
+    privateAppAPIKey +
+    ":" +
+    privateAppPassword +
+    "@" +
+    shop +
+    "/admin/api/2021-01/locations.json";
+  let locationData;
+
+  try {
+    locationData = await axios.get(url);
+    return { data: locationData.data, status: 200 };
+  } catch (e) {
+    console.log(e);
+    return {
+      status: 400,
+      msg: "getting location details failed",
+    };
+  }
+}
+
+async function captureTransaction(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  order_id,
+  transaction
+) {
+  var url =
+    "https://" +
+    privateAppAPIKey +
+    ":" +
+    privateAppPassword +
+    "@" +
+    shop +
+    "/admin/api/2021-01/orders/" +
+    order_id +
+    "/transactions.json";
+  let transactionData;
+
+  try {
+    transactionData = await axios.post(url, transaction);
+    return { data: transactionData.data, status: 200 };
+  } catch (e) {
+    console.log(e);
+    return {
+      status: 400,
+      msg: "capturing transaction failed",
+    };
+  }
+}
+
+async function getFulfillments(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  order_id
+) {
+  var url =
+    "https://" +
+    privateAppAPIKey +
+    ":" +
+    privateAppPassword +
+    "@" +
+    shop +
+    "/admin/api/2021-01/orders/" +
+    order_id +
+    "/fulfillments.json";
+  let fulfillmentData;
+
+  try {
+    fulfillmentData = await axios.get(url);
+    return { data: fulfillmentData.data, status: 200 };
+  } catch (e) {
+    console.log(e);
+    return {
+      status: 400,
+      msg: "fetching fulfillments failed",
+    };
+  }
+}
+
+async function addFulfillments(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  order_id,
+  fulfillment
+) {
+  var url =
+    "https://" +
+    privateAppAPIKey +
+    ":" +
+    privateAppPassword +
+    "@" +
+    shop +
+    "/admin/api/2021-01/orders/" +
+    order_id +
+    "/fulfillments.json";
+  let fulfillmentData;
+
+  try {
+    fulfillmentData = await axios.post(url, fulfillment);
+    return { data: fulfillmentData.data, status: 200 };
+  } catch (e) {
+    console.log(e);
+    return {
+      status: 400,
+      msg: "fetching fulfillments failed",
+    };
+  }
+}
+
 module.exports = {
   addStore,
   getAccessTokenFromDB,
@@ -382,4 +495,8 @@ module.exports = {
   addProductIntoShopifyStorePrivateApp,
   getInventoryDetailsFromShopifyStore,
   changeInventoryDetailsInShopifyStore,
+  getLocationDetails,
+  captureTransaction,
+  getFulfillments,
+  addFulfillments,
 };
