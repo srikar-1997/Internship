@@ -1,5 +1,8 @@
 const Store = require("../models/store");
+const Product = require("../models/products");
+const Order = require("../models/orders");
 const axios = require("axios");
+const orders = require("../models/orders");
 
 async function addStore(shop, accessToken) {
   const store = new Store({
@@ -218,8 +221,9 @@ async function getOrdersFromShopifyStore(
   let ordersData;
 
   try {
-    ordersData = await axios.get(url);
-    return { data: ordersData.data, status: 200 };
+    // ordersData = await axios.get(url);
+    ordersInDb = await orders.find({});
+    return { data: ordersInDb, status: 200 };
   } catch (e) {
     console.log(e);
     return {
@@ -229,7 +233,13 @@ async function getOrdersFromShopifyStore(
   }
 }
 
-async function placeOrder(shop, privateAppAPIKey, privateAppPassword, order) {
+async function placeOrder(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  order,
+  dbOrderId
+) {
   var url =
     "https://" +
     privateAppAPIKey +
@@ -241,13 +251,58 @@ async function placeOrder(shop, privateAppAPIKey, privateAppPassword, order) {
   let placeOrderData;
 
   try {
+    let orderDB = new Order({
+      dbOrderId: dbOrderId,
+      order: order.order,
+    });
+    await orderDB.save();
     placeOrderData = await axios.post(url, order);
+    orderDB = await Order.findOne({ dbOrderId: dbOrderId });
+    console.log(orderDB.order.id);
+    orderDB.order.id = placeOrderData.data.order.id;
+    await orderDB.save();
     return { data: placeOrderData.data, status: 200 };
   } catch (e) {
     console.log(e);
     return {
       status: 400,
       msg: "placing order failed",
+    };
+  }
+}
+
+async function updateOrder(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  order,
+  dbOrderId,
+  id
+) {
+  var url =
+    "https://" +
+    privateAppAPIKey +
+    ":" +
+    privateAppPassword +
+    "@" +
+    shop +
+    "/admin/api/2021-01/orders/" +
+    id +
+    ".json";
+  let placeOrderData;
+
+  try {
+    let orderDB = await Order.findOne({ dbOrderId: dbOrderId });
+    orderDB.order = order;
+    await orderDB.save();
+    placeOrderData = await axios.put(url, order);
+    orderDB = await Order.findOne({ dbOrderId: dbOrderId });
+    return { data: placeOrderData.data, status: 200 };
+  } catch (e) {
+    console.log(e);
+    return {
+      status: 400,
+      msg: "updating order failed",
     };
   }
 }
@@ -268,8 +323,9 @@ async function getProductsFromShopifyStorePrivateApp(
 
   let productsData;
   try {
-    productsData = await axios.get(url);
-    return { data: productsData.data, status: 200 };
+    // productsData = await axios.get(url);
+    productsData = await Product.find({});
+    return { data: productsData, status: 200 };
   } catch (e) {
     console.log(e);
     return {
@@ -283,7 +339,8 @@ async function addProductIntoShopifyStorePrivateApp(
   shop,
   privateAppAPIKey,
   privateAppPassword,
-  product
+  product,
+  sku
 ) {
   var url =
     "https://" +
@@ -296,7 +353,15 @@ async function addProductIntoShopifyStorePrivateApp(
   let productData;
 
   try {
+    let productDB = new Product({
+      sku: sku,
+      product: product.product,
+    });
+    await productDB.save();
     productData = await axios.post(url, product);
+    productDB = await Product.findOne({ sku: sku });
+    productDB.product.id = productData.data.product.id;
+    await productDB.save();
     return { data: productData.data, status: 200 };
   } catch (e) {
     console.log(e);
@@ -307,6 +372,73 @@ async function addProductIntoShopifyStorePrivateApp(
   }
 }
 
+async function updateProductInStorePrivateApp(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  product,
+  sku,
+  id
+) {
+  var url =
+    "https://" +
+    privateAppAPIKey +
+    ":" +
+    privateAppPassword +
+    "@" +
+    shop +
+    "/admin/api/2021-01/products/" +
+    id +
+    ".json";
+  let productData;
+
+  try {
+    let productDB = await Product.findOne({ sku: sku });
+    productDB.product = product.product;
+    await productDB.save();
+    productData = await axios.put(url, product);
+    return { data: productData.data, status: 200 };
+  } catch (e) {
+    console.log(e);
+    return {
+      status: 400,
+      msg: "updating product into store failed",
+    };
+  }
+}
+
+async function deleteProductInStorePrivateApp(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  sku,
+  id
+) {
+  var url =
+    "https://" +
+    privateAppAPIKey +
+    ":" +
+    privateAppPassword +
+    "@" +
+    shop +
+    "/admin/api/2021-01/products/" +
+    id +
+    ".json";
+  let productData;
+
+  try {
+    let productDB = await Product.findOne({ sku: sku });
+    await productDB.remove();
+    productData = await axios.delete(url);
+    return { data: productData.data, status: 200 };
+  } catch (e) {
+    console.log(e);
+    return {
+      status: 400,
+      msg: "deleting product in store failed",
+    };
+  }
+}
 async function getInventoryDetailsFromShopifyStore(
   shop,
   privateAppAPIKey,
@@ -499,4 +631,7 @@ module.exports = {
   captureTransaction,
   getFulfillments,
   addFulfillments,
+  updateProductInStorePrivateApp,
+  deleteProductInStorePrivateApp,
+  updateOrder,
 };

@@ -118,12 +118,37 @@ async function getOrdersFromShopifyStore(
   );
 }
 
-async function placeOrder(shop, privateAppAPIKey, privateAppPassword, order) {
+async function placeOrder(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  order,
+  dbOrderId
+) {
   return await shopifyIntegration.placeOrder(
     shop,
     privateAppAPIKey,
     privateAppPassword,
-    order
+    order,
+    dbOrderId
+  );
+}
+
+async function updateOrder(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  order,
+  dbOrderId,
+  id
+) {
+  return await shopifyIntegration.updateOrder(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    order,
+    dbOrderId,
+    id
   );
 }
 
@@ -143,13 +168,49 @@ async function addProductIntoShopifyStorePrivateApp(
   shop,
   privateAppAPIKey,
   privateAppPassword,
-  product
+  product,
+  sku
 ) {
   return await shopifyIntegration.addProductIntoShopifyStorePrivateApp(
     shop,
     privateAppAPIKey,
     privateAppPassword,
-    product
+    product,
+    sku
+  );
+}
+
+async function updateProductInStorePrivateApp(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  product,
+  sku,
+  id
+) {
+  return await shopifyIntegration.updateProductInStorePrivateApp(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    product,
+    sku,
+    id
+  );
+}
+
+async function deleteProductInStorePrivateApp(
+  shop,
+  privateAppAPIKey,
+  privateAppPassword,
+  sku,
+  id
+) {
+  return await shopifyIntegration.deleteProductInStorePrivateApp(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    sku,
+    id
   );
 }
 
@@ -257,4 +318,7 @@ module.exports = {
   captureTransaction,
   getFulfillments,
   addFulfillments,
+  updateProductInStorePrivateApp,
+  deleteProductInStorePrivateApp,
+  updateOrder,
 };

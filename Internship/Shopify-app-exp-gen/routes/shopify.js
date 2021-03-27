@@ -191,18 +191,44 @@ router.post("/PlaceOrder", async (req, res) => {
   let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
   let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
   let order = req.body.order;
+  let dbOrderId = req.body.dbOrderId;
 
   let placeOrderResponse = await shopifyService.placeOrder(
     shop,
     privateAppAPIKey,
     privateAppPassword,
-    order
+    order,
+    dbOrderId
   );
 
   if (placeOrderResponse.status === 200) {
     res.send(placeOrderResponse);
   } else {
     res.send(placeOrderResponse);
+  }
+});
+
+router.post("/updateOrder", async (req, res) => {
+  let shop = req.body.shop;
+  let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
+  let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
+  let order = req.body.order;
+  let dbOrderId = req.body.dbOrderId;
+  let id = order.order.id;
+
+  let updateOrderResponse = await shopifyService.updateOrder(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    order,
+    dbOrderId,
+    id
+  );
+
+  if (updateOrderResponse.status === 200) {
+    res.send(updateOrderResponse);
+  } else {
+    res.send(updateOrderResponse);
   }
 });
 
@@ -225,6 +251,7 @@ router.post("/getProductsFromShopifyStorePrivateApp", async (req, res) => {
 });
 
 router.post("/addProductIntoShopifyStorePrivateApp", async (req, res) => {
+  let sku = req.body.sku;
   let shop = req.body.shop;
   let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
   let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
@@ -234,13 +261,60 @@ router.post("/addProductIntoShopifyStorePrivateApp", async (req, res) => {
     shop,
     privateAppAPIKey,
     privateAppPassword,
-    product
+    product,
+    sku
   );
 
   if (addProductIntoShopifyStorePrivateAppResponse.status === 200) {
     res.send(addProductIntoShopifyStorePrivateAppResponse);
   } else {
     res.send(addProductIntoShopifyStorePrivateAppResponse);
+  }
+});
+
+router.post("/updateProductInStorePrivateApp", async (req, res) => {
+  const id = req.body.product.product.id;
+  let sku = req.body.sku;
+  let shop = req.body.shop;
+  let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
+  let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
+  let product = req.body.product;
+
+  let updateProductInStorePrivateAppResponse = await shopifyService.updateProductInStorePrivateApp(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    product,
+    sku,
+    id
+  );
+
+  if (updateProductInStorePrivateAppResponse.status === 200) {
+    res.send(updateProductInStorePrivateAppResponse);
+  } else {
+    res.send(updateProductInStorePrivateAppResponse);
+  }
+});
+
+router.post("/deleteProductInStorePrivateApp", async (req, res) => {
+  const id = req.body.id;
+  let sku = req.body.sku;
+  let shop = req.body.shop;
+  let privateAppAPIKey = process.env.PRIVATE_APP_KEY;
+  let privateAppPassword = process.env.PRIVATE_APP_PASSWORD;
+
+  let deleteProductInStorePrivateAppResponse = await shopifyService.deleteProductInStorePrivateApp(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword,
+    sku,
+    id
+  );
+
+  if (deleteProductInStorePrivateAppResponse.status === 200) {
+    res.send(deleteProductInStorePrivateAppResponse);
+  } else {
+    res.send(deleteProductInStorePrivateAppResponse);
   }
 });
 
