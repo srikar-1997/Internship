@@ -2,7 +2,7 @@ const Store = require("../models/store");
 const Product = require("../models/products");
 const Order = require("../models/orders");
 const axios = require("axios");
-const orders = require("../models/orders");
+let Inventory = require("../models/inventory");
 
 async function addStore(shop, accessToken) {
   const store = new Store({
@@ -222,7 +222,7 @@ async function getOrdersFromShopifyStore(
 
   try {
     // ordersData = await axios.get(url);
-    ordersInDb = await orders.find({});
+    ordersInDb = await Order.find({});
     return { data: ordersInDb, status: 200 };
   } catch (e) {
     console.log(e);
@@ -293,7 +293,7 @@ async function updateOrder(
 
   try {
     let orderDB = await Order.findOne({ dbOrderId: dbOrderId });
-    orderDB.order = order;
+    orderDB.order = order.order;
     await orderDB.save();
     placeOrderData = await axios.put(url, order);
     orderDB = await Order.findOne({ dbOrderId: dbOrderId });
@@ -351,6 +351,11 @@ async function addProductIntoShopifyStorePrivateApp(
     shop +
     "/admin/api/2021-01/products.json";
   let productData;
+  let locationDetails = await getLocationDetails(
+    shop,
+    privateAppAPIKey,
+    privateAppPassword
+  );
 
   try {
     let productDB = new Product({
@@ -362,6 +367,15 @@ async function addProductIntoShopifyStorePrivateApp(
     productDB = await Product.findOne({ sku: sku });
     productDB.product.id = productData.data.product.id;
     await productDB.save();
+    let inventory = new Inventory({
+      productId: productData.data.product.id,
+      inventory_item_id: productData.data.product.variants[0].inventory_item_id,
+      location_id: locationDetails.data.locations[0].id,
+      inventory_quantity:
+        productData.data.product.variants[0].inventory_quantity,
+    });
+
+    await inventory.save();
     return { data: productData.data, status: 200 };
   } catch (e) {
     console.log(e);
@@ -397,6 +411,11 @@ async function updateProductInStorePrivateApp(
     productDB.product = product.product;
     await productDB.save();
     productData = await axios.put(url, product);
+    let inventory = await Inventory.findOne({ productId: id });
+    console.log(inventory);
+    inventory.inventory_item_id =
+      productData.data.product.variants[0].inventory_item_id;
+    await inventory.save();
     return { data: productData.data, status: 200 };
   } catch (e) {
     console.log(e);
@@ -458,8 +477,9 @@ async function getInventoryDetailsFromShopifyStore(
 
   let inventoryData;
   try {
-    inventoryData = await axios.get(url);
-    return { data: inventoryData.data, status: 200 };
+    // inventoryData = await axios.get(url);
+    let inventoryData = await Inventory.find({});
+    return { data: inventoryData, status: 200 };
   } catch (e) {
     console.log(e);
     return {
@@ -486,7 +506,14 @@ async function changeInventoryDetailsInShopifyStore(
 
   let inventoryData;
   try {
+    let inventory = await Inventory.findOne({
+      inventory_item_id: inventory_item.inventory_item_id,
+    });
+
+    inventory.inventory_quantity += inventory_item.available_adjustment;
+    await inventory.save();
     inventoryData = await axios.post(url, inventory_item);
+
     return { data: inventoryData.data, status: 200 };
   } catch (e) {
     console.log(e);
