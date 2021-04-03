@@ -50,7 +50,7 @@ def update_user():
     except:
         return jsonify({"status": 400, "msg": "updating user details failed" })
 
-@app.route("/getUsers", methods=["GET"])
+@app.route("/getAllUsers", methods=["GET"])
 def get_user():
     try:
         users = Users.query.all()

@@ -4,6 +4,7 @@ const axios = require("axios");
 const bcStore = require("../models/bigcommerceModel");
 const base64url = require("base64url");
 const crypto = require("crypto");
+const ProductDB = require("../models/products");
 
 /* GET users listing. */
 router.get("/auth", async function (req, res, next) {
@@ -28,7 +29,7 @@ router.get("/auth", async function (req, res, next) {
     "&scope=" +
     scopes +
     "&grant_type=authorization_code&redirect_uri=" +
-    "https://13e13ceba7ba.ngrok.io/bigcommerce/auth" +
+    "https://85b0718df514.ngrok.io/bigcommerce/auth" +
     "&context=" +
     hash;
 
@@ -79,8 +80,9 @@ router.get("/getProducts", async function (req, res) {
       .accessToken,
   };
   try {
-    let productData = await axios.get(url, { headers: headers });
-    res.send(productData.data);
+    // let productData = await axios.get(url, { headers: headers });
+    let productData = await ProductDB.find({});
+    res.send(productData);
   } catch (e) {
     console.log(e);
   }
@@ -88,7 +90,8 @@ router.get("/getProducts", async function (req, res) {
 
 router.post("/addProductInStore", async function (req, res) {
   let storeHash = req.query.storeHash;
-  let product = req.body;
+  let product = req.body.product;
+  let sku = req.body.sku;
   let url =
     "https://api.bigcommerce.com/stores/" + storeHash + "/v3/catalog/products";
   let headers = {
@@ -98,7 +101,18 @@ router.post("/addProductInStore", async function (req, res) {
       .accessToken,
   };
   try {
-    let productData = await axios.post(url, product, { headers: headers });
+    const productD = new ProductDB({
+      sku: sku,
+      product: product,
+    });
+    await productD.save();
+    let productData = await axios.post(url, product, {
+      headers: headers,
+    });
+    productDB = await ProductDB.findOne({ sku: sku });
+    productDB.product.id = productData.data.data.id;
+    await productDB.save();
+    console.log(productData.data.data.id);
     res.send(productData.data);
   } catch (e) {
     console.log(e);
@@ -133,6 +147,7 @@ router.post("/updateProductDetails", async function (req, res) {
   let storeHash = req.query.storeHash;
   let product = req.body;
   let productId = req.query.productId;
+  let sku = req.query.sku;
   let url =
     "https://api.bigcommerce.com/stores/" +
     storeHash +
@@ -145,6 +160,9 @@ router.post("/updateProductDetails", async function (req, res) {
       .accessToken,
   };
   try {
+    let productDB = await ProductDB.findOne({ sku: sku });
+    productDB.product.name = req.body.name;
+    await productDB.save();
     let productData = await axios.put(url, product, {
       headers: headers,
     });
@@ -157,6 +175,7 @@ router.post("/updateProductDetails", async function (req, res) {
 router.get("/deleteProductInStore", async function (req, res) {
   let storeHash = req.query.storeHash;
   let productId = req.query.productId;
+  let sku = req.query.sku;
   let url =
     "https://api.bigcommerce.com/stores/" +
     storeHash +
@@ -169,10 +188,86 @@ router.get("/deleteProductInStore", async function (req, res) {
       .accessToken,
   };
   try {
+    let productDB = await ProductDB.findOne({ sku: sku });
+    await productDB.remove();
     let productData = await axios.delete(url, {
       headers: headers,
     });
     res.send(productData.data);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+router.post("/placeOrder", async function (req, res) {
+  let storeHash = req.query.storeHash;
+  let order = req.body;
+  let url = "https://api.bigcommerce.com/stores/" + storeHash + "/v2/orders";
+  let headers = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    "X-Auth-token": (await bcStore.findOne({ storeHash: storeHash }))
+      .accessToken,
+  };
+  try {
+    let orderData = await axios.post(url, order, { headers: headers });
+    res.send(orderData.data);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+router.get("/getOrders", async function (req, res) {
+  let storeHash = req.query.storeHash;
+  let url = "https://api.bigcommerce.com/stores/" + storeHash + "/v2/orders";
+  let headers = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    "X-Auth-token": (await bcStore.findOne({ storeHash: storeHash }))
+      .accessToken,
+  };
+  try {
+    let orderData = await axios.get(url, { headers: headers });
+    res.send(orderData.data);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+router.post("/updateOrder", async function (req, res) {
+  let storeHash = req.query.storeHash;
+  let orderId = req.query.orderId;
+  let order = req.body;
+  let url =
+    "https://api.bigcommerce.com/stores/" + storeHash + "/v2/orders/" + orderId;
+  let headers = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    "X-Auth-token": (await bcStore.findOne({ storeHash: storeHash }))
+      .accessToken,
+  };
+  try {
+    let orderData = await axios.put(url, order, { headers: headers });
+    res.send(orderData.data);
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+router.get("/deleteOrder", async function (req, res) {
+  let storeHash = req.query.storeHash;
+  let orderId = req.query.orderId;
+  let url =
+    "https://api.bigcommerce.com/stores/" + storeHash + "/v2/orders/" + orderId;
+  let headers = {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    "X-Auth-token": (await bcStore.findOne({ storeHash: storeHash }))
+      .accessToken,
+  };
+  try {
+    let orderData = await axios.delete(url, { headers: headers });
+    res.send(orderData.data);
   } catch (e) {
     console.log(e);
   }
