@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<heading>
+<subheading>
+ <sku>Sita</sku>
+ <price>201.13</price>
+ <title>sita@example.com</title>
+</subheading>
+<subheading>
+ <sku>Sam</sku>
+ <price>905.33</price>
+ <title>sam@example.com</title>
+</subheading>
+</heading>
