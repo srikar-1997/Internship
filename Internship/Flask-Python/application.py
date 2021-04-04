@@ -34,7 +34,12 @@ def add_user():
         user = Users(id = id, name = name, isVoted = False)
         db.session.add(user)
         db.session.commit()
-        return jsonify({"status": 200, "msg": "User successfully added" })
+        body = {
+            'id': user.id,
+            'name':user.name,
+            'isVoted':user.isVoted
+        }
+        return jsonify({"status": 200, "msg": "User successfully added", 'body':body})
     except:
         return jsonify({"status": 400, "msg": "adding user failed" })
 
@@ -46,7 +51,12 @@ def update_user():
         user.isVoted = True
         db.session.add(user)
         db.session.commit()
-        return jsonify({"status": 200, "msg": "updating user details successful" })
+        body = {
+            'id': user.id,
+            'name':user.name,
+            'isVoted':user.isVoted
+        }
+        return jsonify({"status": 200, "msg": "updating user details successful", 'body':body})
     except:
         return jsonify({"status": 400, "msg": "updating user details failed" })
 
@@ -75,7 +85,7 @@ def delete_user():
         db.session.commit()
         return jsonify({"status": 200, "msg": "deleting user success" })
     except:
-        return jsonify({"status": 400, "msg": "getting users failed" })
+        return jsonify({"status": 400, "msg": "deleting user failed" })
 
 
 
